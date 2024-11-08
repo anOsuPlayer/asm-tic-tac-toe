@@ -1,6 +1,6 @@
 .section .rodata
 .row: .string "%c | %c | %c\n"
-.mid: .string "------------\n"
+.mid: .string "---------\n"
 
 .p1: .string "X"
 .p2: .string "O"
@@ -14,11 +14,11 @@
 .move: .string "%d %d"
 .d: .string "%d"
 
-.play1: .string "player 1's turn: "
-.play2: .string "player 2's turn: "
+.play1: .string "(X) player 1's turn: "
+.play2: .string "(O) player 2's turn: "
 
-.win1: .string "player 1 won!\n"
-.win2: .string "player 2 won!\n"
+.win1: .string "(X) player 1 won!\n"
+.win2: .string "(O) player 2 won!\n"
 
 .draw: .string "draw!\n"
 
@@ -425,6 +425,9 @@ print_table:
     movb (%rsi, %rdi, 4), %r9b
     call printf
 
+    leaq .mid(%rip), %rcx
+    call printf
+
     addq $32, %rsp
     popq %rbp
     ret
@@ -445,6 +448,9 @@ main:
         cmpq $1, %rax
         jnz .print_loop_1
 
+        leaq .mid(%rip), %rcx
+        call __mingw_printf
+
         call check_win
         cmpq $0, %rax
         jnz .game_win
@@ -459,6 +465,9 @@ main:
             call place_2
         cmpq $1, %rax
         jnz .print_loop_2
+
+        leaq .mid(%rip), %rcx
+        call __mingw_printf
 
         call check_win
         cmpq $0, %rax
@@ -475,6 +484,8 @@ main:
     call printf
 
     .game_win:
+    leaq .mid(%rip), %rcx
+    call __mingw_printf
     call print_table
 
     addq $64, %rsp
